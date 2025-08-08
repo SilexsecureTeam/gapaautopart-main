@@ -8,6 +8,7 @@ import Find from "../Components/Find";
 import ProductSection from "../Components/ProductSection";
 import { TopProduct } from "../Data/ProductData";
 import Interested from "../Components/Interested";
+import Images from "../Components/Images";
 
 const Home = () => {
   return (
@@ -18,6 +19,7 @@ const Home = () => {
       <Find />
       <ProductSection title="Our Top Products" products={TopProduct} />
       <Interested />
+      <Images />
       <Brands animationDuration={10} />
       <Footer />
     </div>

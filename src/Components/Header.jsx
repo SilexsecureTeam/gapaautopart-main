@@ -14,13 +14,16 @@ import {
 } from "lucide-react";
 import { SiX } from "react-icons/si";
 import logo from "../assets/logo.png";
+import { useCart } from "../context/useCart";
+import { Link } from "react-router-dom";
 
 const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isBrandsOpen, setIsBrandsOpen] = useState(false);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
+  const { cartItems, totalWishlistItems } = useCart();
+  const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
-  // Toggle functions
   const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
   const toggleBrands = () => setIsBrandsOpen((prev) => !prev);
   const toggleCategories = () => setIsCategoriesOpen((prev) => !prev);
@@ -61,22 +64,22 @@ const Header = () => {
               <span className="text-gray-300 text-xs mr-2">Follow Us:</span>
               {[
                 {
-                  Icon: Facebook,
+                  SocialIcon: Facebook,
                   href: "https://facebook.com",
                   label: "Facebook",
                 },
-                { Icon: SiX, href: "https://x.com", label: "X" },
+                { SocialIcon: SiX, href: "https://x.com", label: "X" },
                 {
-                  Icon: Instagram,
+                  SocialIcon: Instagram,
                   href: "https://instagram.com",
                   label: "Instagram",
                 },
                 {
-                  Icon: Linkedin,
+                  SocialIcon: Linkedin,
                   href: "https://linkedin.com",
                   label: "LinkedIn",
-                },
-              ].map(({ Icon, href, label }) => (
+                }, //eslint-disable-next-line
+              ].map(({ SocialIcon, href, label }) => (
                 <a
                   key={label}
                   href={href}
@@ -85,7 +88,7 @@ const Header = () => {
                   aria-label={label}
                   className="w-8 h-8 bg-gray-700 hover:bg-[#492F92] rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110"
                 >
-                  <Icon size={16} />
+                  <SocialIcon size={16} />
                 </a>
               ))}
             </div>
@@ -118,9 +121,9 @@ const Header = () => {
                   <div className="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-lg shadow-xl border border-gray-200 z-50">
                     {["My Account", "Orders", "Wishlist", "Logout"].map(
                       (item, index) => (
-                        <a
+                        <Link
                           key={item}
-                          href="/"
+                          to={item === "Wishlist" ? "/wishlist" : "/"}
                           className={`block px-4 py-2 hover:bg-gray-50 transition-colors ${
                             index === 0
                               ? "rounded-t-lg"
@@ -131,7 +134,7 @@ const Header = () => {
                           onClick={() => setIsDropdownOpen(false)}
                         >
                           {item}
-                        </a>
+                        </Link>
                       )
                     )}
                   </div>
@@ -143,15 +146,17 @@ const Header = () => {
       </div>
 
       {/* Main Header - Logo, Search, Cart */}
-      <div className="bg-[#f7cd3a] shadow-md ">
+      <div className="bg-[#f7cd3a] shadow-md">
         <div className="mx-auto max-w-[1200px] px-4 md:px-8 py-4">
           <div className="flex flex-col lg:flex-row justify-between items-center gap-6">
             {/* Logo */}
-            <img
-              src={logo}
-              alt="Company Logo"
-              className="w-50 h-20 sm:w-60 sm:h-24 object-contain"
-            />
+            <Link to="/">
+              <img
+                src={logo}
+                alt="Company Logo"
+                className="w-50 h-20 sm:w-60 sm:h-24 object-contain"
+              />
+            </Link>
 
             {/* Search Bar */}
             <div className="flex-1 max-w-2xl w-full">
@@ -169,36 +174,32 @@ const Header = () => {
 
             {/* Cart & Wishlist */}
             <div className="flex items-center gap-4">
-              <a
-                href="/wishlist"
-                className="relative group"
-                aria-label="Wishlist"
-              >
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 group-hover:bg-red-50 rounded-lg flex items-center justify-center transition-all duration-200">
+              <Link to="/wishlist" className="relative group">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 group-hover:bg-red-100 rounded-lg flex items-center justify-center transition-all duration-200">
                   <Heart
                     size={20}
                     className="text-gray-600 group-hover:text-red-500 transition-colors"
                   />
+                  {totalWishlistItems > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                      {totalWishlistItems}
+                    </span>
+                  )}
                 </div>
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                  0
-                </span>
-              </a>
-              <a
-                href="/cart"
-                className="relative group"
-                aria-label="Shopping Cart"
-              >
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 group-hover:bg-[#f7cd3a] rounded-lg flex items-center justify-center transition-all duration-200">
+              </Link>
+              <Link to="/cart" className="relative group">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-100 group-hover:text-red-500 rounded-lg flex items-center justify-center transition-all duration-200">
                   <ShoppingCart
                     size={20}
-                    className="text-gray-600 group-hover:text-gray-800 transition-colors"
+                    className="text-gray-600  transition-colors"
                   />
+                  {cartCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1 rounded-full">
+                      {cartCount}
+                    </span>
+                  )}
                 </div>
-                <span className="absolute -top-2 -right-2 bg-[#492F92] text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                  0
-                </span>
-              </a>
+              </Link>
             </div>
           </div>
         </div>

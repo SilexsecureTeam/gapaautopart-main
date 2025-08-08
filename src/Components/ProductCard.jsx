@@ -7,27 +7,15 @@ import {
   Info,
   CheckCircle,
 } from "lucide-react";
+import { useCart } from "../context/useCart";
 
 const ProductCard = ({ product }) => {
+  const { addToCart, wishlistItems, addToWishlist, removeFromWishlist } =
+    useCart();
   const [showDetails, setShowDetails] = useState(false);
   const [quantity, setQuantity] = useState(1);
-  const [isLoved, setIsLoved] = useState(false);
   const priceNGN = product.priceGBP * 2000;
-
-  // Mock product data for demonstration
-  // const mockProduct = product || {
-  //   image:
-  //     "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=300&h=300&fit=crop",
-  //   title: "Premium Engine Oil Filter - High Performance",
-  //   articleNo: "EOL-2024-HP",
-  //   rating: 8.5,
-  //   priceGBP: 25,
-  //   vehicleType: "Universal",
-  //   quantityUnit: "1 Unit",
-  //   condition: "New",
-  //   brand: "AutoPro",
-  //   compatibility: "Most Vehicles",
-  // };
+  const isInWishlist = wishlistItems.some((item) => item.id === product.id);
 
   return (
     <div className="w-full p-2 sm:p-3">
@@ -42,10 +30,16 @@ const ProductCard = ({ product }) => {
           </div>
           <button
             className="text-gray-300 hover:text-red-400 focus:outline-none focus:ring-2 focus:ring-red-400 rounded-full p-1 transition-colors"
-            onClick={() => setIsLoved(!isLoved)}
-            aria-label={isLoved ? "Remove from wishlist" : "Add to wishlist"}
+            onClick={() =>
+              isInWishlist
+                ? removeFromWishlist(product.id)
+                : addToWishlist(product)
+            }
+            aria-label={
+              isInWishlist ? "Remove from wishlist" : "Add to wishlist"
+            }
           >
-            {isLoved ? (
+            {isInWishlist ? (
               <Heart fill="currentColor" className="w-5 h-5 text-red-400" />
             ) : (
               <Heart className="w-5 h-5" />
@@ -155,7 +149,13 @@ const ProductCard = ({ product }) => {
                 </button>
               </div>
             </div>
-            <button className="flex-1 sm:flex-initial bg-[#492F92] hover:bg-[#3a2470] text-white px-3 sm:px-4 py-2 rounded-md flex items-center justify-center space-x-2 font-semibold transition-colors duration-200 text-xs sm:text-sm">
+            <button
+              onClick={() => {
+                addToCart(product, quantity);
+                setQuantity(1);
+              }}
+              className="flex-1 sm:flex-initial bg-[#492F92] hover:bg-[#3a2470] text-white px-3 sm:px-4 py-2 rounded-md flex items-center justify-center space-x-2 font-semibold transition-colors duration-200 text-xs sm:text-sm"
+            >
               <ShoppingCart className="w-4 h-4" />
               <span>Add to Cart</span>
             </button>
